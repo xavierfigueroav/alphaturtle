@@ -16,37 +16,12 @@
  */
 package alphaturtle;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
 
 /**
  *
  * @author Galo Xavier Figueroa Villacreses
  */
-public class AlphaTurtle extends Application {
-    
-    private Stage stage;
-    private Menus menuBar;
-    private Scene welcomeScene;
-    
-    @Override
-    public void start(Stage primaryStage) {
-        stage = primaryStage;
-        
-        WelcomeScreen welcome = new WelcomeScreen();
-        welcomeScene = new Scene(welcome, 600, 400);
-        stage.setScene(welcomeScene);
-        stage.setTitle("AlphaTurtle");
-        
-        stage.show();
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
+public class ScheduleScreen extends VBox {
     
 }
