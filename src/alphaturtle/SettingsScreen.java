@@ -19,7 +19,6 @@ package alphaturtle;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -127,11 +126,15 @@ public class SettingsScreen extends VBox{
             boolean endTimeIsSelected = toOptions.getValue() != null;
             
             if(periodIsSelected && startTimeIsSelected && endTimeIsSelected){
+                
                 Stage stage = (Stage)SettingsScreen.this.getScene().getWindow();
                 
-                ScheduleScreen nextScreen = new ScheduleScreen();
+                int scheduleSize = getScheduleSize();
                 
-                stage.setScene(new Scene(nextScreen, 600, 400));
+                ScheduleScreen nextScreen = new ScheduleScreen(scheduleSize);
+                
+                stage.setScene(new Scene(nextScreen, 800, 800));
+                
             } else {
                 
                 Alert fieldEmptyAlert = new Alert(Alert.AlertType.INFORMATION);
@@ -167,6 +170,16 @@ public class SettingsScreen extends VBox{
             }
             
         }
+    }
+    
+    private int getScheduleSize(){
+        
+        String selectedStartTime = (String)fromOptions.getValue();
+        String selectedEndTime = (String)toOptions.getValue();
+        int startIndex = hoursList.indexOf(selectedStartTime);
+        int endIndex = hoursList.indexOf(selectedEndTime);
+        
+        return endIndex - startIndex;
     }
     
 }

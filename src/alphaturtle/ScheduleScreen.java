@@ -16,6 +16,7 @@
  */
 package alphaturtle;
 
+import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 
 /**
@@ -23,5 +24,16 @@ import javafx.scene.layout.VBox;
  * @author Galo Xavier Figueroa Villacreses
  */
 public class ScheduleScreen extends VBox {
+    
+    private Schedule schedule;
+    
+    public ScheduleScreen(int scheduleSize){
+        
+        this.schedule = new Schedule(scheduleSize);
+        
+        this.getChildren().add(this.schedule.getSchedule());
+        this.setAlignment(Pos.CENTER);
+        
+    }
     
 }
