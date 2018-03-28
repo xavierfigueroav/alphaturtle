@@ -43,13 +43,13 @@ public class WelcomeScreen extends VBox {
         
         appDescription.setWrappingWidth(500);
         startButton = new Button("¡Empecemos!");
-        startButton.setOnAction(new nextSceneHandler());
+        startButton.setOnAction(new nextButtonHandler());
         this.setAlignment(Pos.CENTER);
         this.getChildren().addAll(appName, appDescription, startButton);
         
     }
     
-    private class nextSceneHandler implements EventHandler<ActionEvent> {
+    private class nextButtonHandler implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent event) {

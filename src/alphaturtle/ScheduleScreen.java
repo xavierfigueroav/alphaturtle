@@ -16,23 +16,73 @@
  */
 package alphaturtle;
 
+import java.util.ArrayList;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
  *
  * @author Galo Xavier Figueroa Villacreses
  */
-public class ScheduleScreen extends VBox {
+public class ScheduleScreen extends HBox {
     
     private Schedule schedule;
+    private TextField nameField;
+    private Button addButton, nextButton;
+    private VBox mainContainer;
+    private HBox buttonsContainer;
     
-    public ScheduleScreen(int scheduleSize){
+    public ScheduleScreen(ArrayList<String> periodsList){
         
-        this.schedule = new Schedule(scheduleSize);
+        createContents(periodsList);
         
-        this.getChildren().add(this.schedule.getSchedule());
+        buttonsContainer.getChildren().addAll(addButton, nextButton);
+        
+        mainContainer.getChildren().addAll(nameField, this.schedule.getSchedule(), buttonsContainer);
+        
+        
+        setListeners();
+        setStyles();
+        this.getChildren().add(mainContainer);
+        
+        
+    }
+    
+    private void createContents(ArrayList<String> periodsList){
+        
+        schedule = new Schedule(periodsList);
+        nameField = new TextField();
+        addButton = new Button("Add schedule");
+        nextButton = new Button("Finish");
+        mainContainer = new VBox();
+        buttonsContainer = new HBox();
+        
+    }
+    
+    private void setListeners(){
+        
+    }
+    
+    private void setStyles(){
         this.setAlignment(Pos.CENTER);
+        
+        nameField.setMinSize(300,30);
+        nameField.setMaxSize(300,30);
+        nameField.setAlignment(Pos.CENTER);
+        nameField.setFocusTraversable(false);
+        
+        
+        
+        buttonsContainer.setAlignment(Pos.CENTER);
+        buttonsContainer.setSpacing(20);
+        
+        
+        mainContainer.setAlignment(Pos.CENTER);
+        mainContainer.setSpacing(20);
+        
         
     }
     

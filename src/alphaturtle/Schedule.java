@@ -16,9 +16,22 @@
  */
 package alphaturtle;
 
+import java.util.ArrayList;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
@@ -29,11 +42,15 @@ import javafx.scene.shape.Rectangle;
 public class Schedule {
     
     private final int DAYS_OF_WEEK = 7;
+    private final int scheduleSize;
+    private final String[] DAYS = {"LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO", "DOMINGO"};
+    private final ArrayList<String> periodsList;
     private GridPane schedule;
     private int[][] mirrorSchedule;
     
-    public Schedule(int scheduleSize){
-        
+    public Schedule(ArrayList<String> periodsList){
+        this.periodsList = periodsList;
+        scheduleSize = periodsList.size();
         createSchedule(scheduleSize);
         createPsuedoSchedule(scheduleSize);
     }
@@ -47,46 +64,69 @@ public class Schedule {
     private void createSchedule(int scheduleSize){
         
         this.schedule = new GridPane();
-        this.schedule.setGridLinesVisible(true);
-        this.mirrorSchedule = new int[scheduleSize][DAYS_OF_WEEK];
+        this.mirrorSchedule = new int[scheduleSize + 1][DAYS_OF_WEEK + 1];
         
-        for(int row = 0; row<scheduleSize;row++){
-            for(int column = 0; column<DAYS_OF_WEEK;column++){
+        for(int row = 0; row<=scheduleSize;row++){
+            
+            for(int column = 0; column<=DAYS_OF_WEEK;column++){
                 
-                Rectangle activity = new Rectangle(100,40);
-                activity.setFill(Paint.valueOf("White"));
-                activity.setStroke(Paint.valueOf("Grey"));
+                if(column > 0 && row == 0){
+                    
+                    Label day = new Label(DAYS[column - 1]);
+                    HBox dayContainer = new HBox();
+                    dayContainer.getChildren().add(day);
+                    dayContainer.setAlignment(Pos.CENTER);
+                    dayContainer.setBackground(new Background(new BackgroundFill(Color.HONEYDEW, CornerRadii.EMPTY, Insets.EMPTY)));
+                    schedule.add(dayContainer, column, row);
                 
-                activity.setOnMouseClicked(new ClickHandler(activity, row, column));
+                } else if(row > 0 && column == 0){
+                    
+                    Label hour = new Label( (String) periodsList.get(row - 1));
+                    HBox hourContainer = new HBox();
+                    hourContainer.setMinWidth(100);
+                    hourContainer.getChildren().add(hour);
+                    hourContainer.setAlignment(Pos.CENTER);
+                    hourContainer.setBackground(new Background(new BackgroundFill(Color.HONEYDEW, CornerRadii.EMPTY, Insets.EMPTY)));
+                    schedule.add(hourContainer, column, row);
                 
-                schedule.add(activity, column, row);
+                } else if (row != 0 && column != 0){
+                
+                    Rectangle cell = new Rectangle(100,400/scheduleSize);
+                    cell.setFill(Color.WHITE);
+                    cell.setStroke(Color.HONEYDEW);
+                    cell.setStrokeWidth(0.20);
+
+                    cell.setOnMouseClicked(new ClickOnCellHandler(cell, row, column));
+
+                    schedule.add(cell, column, row);
+                }
             }
         }
         
     }
 
-    private class ClickHandler implements EventHandler<MouseEvent> {
+    private class ClickOnCellHandler implements EventHandler<MouseEvent> {
 
-        private final Rectangle activity;
+        private final Rectangle cell;
         private final int row;
         private final int column;
 
-        public ClickHandler(Rectangle activity, int row, int column) {
-            this.activity = activity;
-            this.row = row;
-            this.column = column;
+        public ClickOnCellHandler(Rectangle cell, int row, int column) {
+            this.cell = cell;
+            this.row = row - 1;
+            this.column = column - 1;
         }
 
         @Override
         public void handle(MouseEvent e) {
-            if(activity.getFill().equals(Paint.valueOf("White"))){
+            if(cell.getFill().equals(Color.WHITE)){
                 
-                activity.setFill(Paint.valueOf("Green"));
+                cell.setFill(Color.LIGHTBLUE);
                 mirrorSchedule[row][column] = 1;
                 
             } else {
                 
-                activity.setFill(Paint.valueOf("White"));
+                cell.setFill(Color.WHITE);
                 mirrorSchedule[row][column] = 0;
             }
         }
