@@ -142,6 +142,8 @@ public class SettingsScreen extends VBox{
                 
                 Alert fieldEmptyAlert = new Alert(Alert.AlertType.INFORMATION);
                 
+                fieldEmptyAlert.setTitle("Información");
+                fieldEmptyAlert.setHeaderText("¡Campo vacío!");
                 fieldEmptyAlert.setContentText("Hay un campo vacío");
                 
                 fieldEmptyAlert.showAndWait();

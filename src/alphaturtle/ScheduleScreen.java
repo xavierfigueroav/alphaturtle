@@ -17,11 +17,18 @@
 package alphaturtle;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  *
@@ -29,40 +36,54 @@ import javafx.scene.layout.VBox;
  */
 public class ScheduleScreen extends HBox {
     
+    private final ArrayList<String> periodsList;
     private Schedule schedule;
-    private TextField nameField;
-    private Button addButton, nextButton;
+    private final ArrayList<Schedule> schedules;
     private VBox mainContainer;
-    private HBox buttonsContainer;
+    private HBox scheduleContainer, buttonsContainer;
+    private TextField nameField;
+    private Button backButton, addButton, nextButton, startButton;
     
     public ScheduleScreen(ArrayList<String> periodsList){
         
-        createContents(periodsList);
+        this.periodsList = periodsList;
         
-        buttonsContainer.getChildren().addAll(addButton, nextButton);
+        schedules = new ArrayList();
         
-        mainContainer.getChildren().addAll(nameField, this.schedule.getSchedule(), buttonsContainer);
-        
-        
-        setListeners();
+        createContents();
         setStyles();
-        this.getChildren().add(mainContainer);
+        setListeners();
         
+        this.getChildren().add(mainContainer);
         
     }
     
-    private void createContents(ArrayList<String> periodsList){
+    private void createContents(){
         
         schedule = new Schedule(periodsList);
+        schedules.add(schedule);
+        
         nameField = new TextField();
-        addButton = new Button("Add schedule");
-        nextButton = new Button("Finish");
+        startButton = new Button("Empezar de nuevo");
+        backButton = new Button("Anterior");
+        addButton = new Button("Agregar otro horario");
+        nextButton = new Button("Agregar y finalizar");
+        scheduleContainer = new HBox();
         mainContainer = new VBox();
         buttonsContainer = new HBox();
+        
+        scheduleContainer.getChildren().add(this.schedule.getAsNode());
+        buttonsContainer.getChildren().addAll(startButton, backButton, addButton, nextButton);
+        mainContainer.getChildren().addAll(nameField, scheduleContainer, buttonsContainer);
         
     }
     
     private void setListeners(){
+        
+        startButton.setOnAction(new StartButtonHandler());
+        backButton.setOnAction(new BackButtonHandler());
+        addButton.setOnAction(new AddButtonHandler());
+        nextButton.setOnAction(new NextButtonHandler());
         
     }
     
@@ -72,18 +93,138 @@ public class ScheduleScreen extends HBox {
         nameField.setMinSize(300,30);
         nameField.setMaxSize(300,30);
         nameField.setAlignment(Pos.CENTER);
+        nameField.setPromptText("Nombre del propietario del horario");
         nameField.setFocusTraversable(false);
         
-        
+        backButton.setDisable(true);
+        nextButton.setDisable(true);
         
         buttonsContainer.setAlignment(Pos.CENTER);
         buttonsContainer.setSpacing(20);
         
-        
         mainContainer.setAlignment(Pos.CENTER);
         mainContainer.setSpacing(20);
         
+    }
+
+    private class StartButtonHandler implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            
+            Stage stage = (Stage) ScheduleScreen.this.getScene().getWindow();
+                
+            SettingsScreen nextScreen = new SettingsScreen();
+
+            stage.setScene(new Scene(nextScreen, 600, 400));
         
+        }
+    }
+
+    private class BackButtonHandler implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            
+            askPermission();
+            
+        }
+
+        private void askPermission() {
+            
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            
+            confirmationAlert.setTitle("Confirmación");
+            confirmationAlert.setContentText("Al regresar perderás la información del horario actual");
+            confirmationAlert.setHeaderText("¿Estás seguro de regresar?");
+
+            Optional<ButtonType> result = confirmationAlert.showAndWait();
+
+            if(result.get() == ButtonType.OK){
+
+                yield();
+
+            }
+        }
+        
+        private void yield(){
+            
+            int previusScheduleIndex = ScheduleScreen.this.schedules.size() - 2;
+            
+            ScheduleScreen.this.schedule = ScheduleScreen.this.schedules.get(previusScheduleIndex);
+            ScheduleScreen.this.schedules.remove(previusScheduleIndex + 1);
+            
+            ScheduleScreen.this.scheduleContainer.getChildren().clear();
+            ScheduleScreen.this.scheduleContainer.getChildren().add(ScheduleScreen.this.schedule.getAsNode());
+            
+        }
+    }
+
+    private class AddButtonHandler implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            
+            String ownerName = nameField.getText();
+            
+            if(ownerName.isEmpty()){
+                
+                Alert fieldEmptyAlert = new Alert(Alert.AlertType.INFORMATION);
+                
+                fieldEmptyAlert.setTitle("Información");
+                fieldEmptyAlert.setHeaderText("¡Campo vacío!");
+                fieldEmptyAlert.setContentText("Olvidaste ingresar un nombre");
+                
+                fieldEmptyAlert.showAndWait();
+                
+            } else {
+                
+                ScheduleScreen.this.schedule.setOwnerName(ownerName);
+                
+                nameField.setText("");
+                if(backButton.isDisabled()) backButton.setDisable(false);
+                if(nextButton.isDisabled()) nextButton.setDisable(false);
+                
+                ScheduleScreen.this.schedule = new Schedule(periodsList);
+                ScheduleScreen.this.schedules.add(ScheduleScreen.this.schedule);
+                
+                ScheduleScreen.this.scheduleContainer.getChildren().clear();
+                ScheduleScreen.this.scheduleContainer.getChildren().add(ScheduleScreen.this.schedule.getAsNode());
+            }
+        
+        }
+    }
+
+    private class NextButtonHandler implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            
+            String ownerName = nameField.getText();
+            
+            if(ownerName.isEmpty()){
+                
+                Alert fieldEmptyAlert = new Alert(Alert.AlertType.INFORMATION);
+                
+                fieldEmptyAlert.setTitle("Información");
+                fieldEmptyAlert.setHeaderText("¡Campo vacío!");
+                fieldEmptyAlert.setContentText("Olvidaste ingresar un nombre");
+                
+                fieldEmptyAlert.showAndWait();
+                
+            } else {
+                
+                ScheduleScreen.this.schedule.setOwnerName(ownerName);
+                
+                Stage stage = (Stage)ScheduleScreen.this.getScene().getWindow();
+            
+                ResultsScreen nextScreen = new ResultsScreen();
+
+                stage.setScene(new Scene(nextScreen,900,600));
+                
+            }
+            
+        }
     }
     
 }

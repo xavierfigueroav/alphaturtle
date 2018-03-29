@@ -41,6 +41,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class Schedule {
     
+    private String ownerName;
     private final int DAYS_OF_WEEK = 7;
     private final int scheduleSize;
     private final String[] DAYS = {"LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO", "DOMINGO"};
@@ -132,8 +133,14 @@ public class Schedule {
         }
     }
     
-    public GridPane getSchedule(){
+    public GridPane getAsNode(){
         return this.schedule;
+    }
+    
+    public void setOwnerName(String ownerName){
+        
+        this.ownerName = ownerName;
+        
     }
     
 }
