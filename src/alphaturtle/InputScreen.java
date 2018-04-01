@@ -25,28 +25,28 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
  *
  * @author Galo Xavier Figueroa Villacreses
  */
-public class ScheduleScreen extends HBox {
+public class InputScreen extends HBox {
     
-    private final ArrayList<String> periodsList;
-    private Schedule schedule;
-    private final ArrayList<Schedule> schedules;
+    private InputSchedule schedule;
+    private final ArrayList<InputSchedule> schedules;
     private VBox mainContainer;
-    private HBox scheduleContainer, buttonsContainer;
+    private HBox fieldContainer, scheduleContainer, buttonsContainer;
     private TextField nameField;
     private Button backButton, addButton, nextButton, startButton;
+    private Label alertLabel;
     
-    public ScheduleScreen(ArrayList<String> periodsList){
-        
-        this.periodsList = periodsList;
+    public InputScreen(){
         
         schedules = new ArrayList();
         
@@ -60,21 +60,26 @@ public class ScheduleScreen extends HBox {
     
     private void createContents(){
         
-        schedule = new Schedule(periodsList);
+        schedule = new InputSchedule();
         schedules.add(schedule);
         
         nameField = new TextField();
-        startButton = new Button("Empezar de nuevo");
+        startButton = new Button("Volver a empezar");
         backButton = new Button("Anterior");
-        addButton = new Button("Agregar otro horario");
-        nextButton = new Button("Agregar y finalizar");
-        scheduleContainer = new HBox();
-        mainContainer = new VBox();
-        buttonsContainer = new HBox();
+        addButton = new Button("Registrar horario");
+        nextButton = new Button("Registrar y finalizar");
         
+        alertLabel = new Label("¡Olvidaste el nombre!");
+        
+        fieldContainer = new HBox();
+        scheduleContainer = new HBox();
+        buttonsContainer = new HBox();
+        mainContainer = new VBox();
+        
+        fieldContainer.getChildren().add(nameField);
         scheduleContainer.getChildren().add(this.schedule.getAsNode());
         buttonsContainer.getChildren().addAll(startButton, backButton, addButton, nextButton);
-        mainContainer.getChildren().addAll(nameField, scheduleContainer, buttonsContainer);
+        mainContainer.getChildren().addAll(fieldContainer, scheduleContainer, buttonsContainer);
         
     }
     
@@ -99,6 +104,12 @@ public class ScheduleScreen extends HBox {
         backButton.setDisable(true);
         nextButton.setDisable(true);
         
+        alertLabel.setTextFill(Color.RED);
+        alertLabel.setStyle("-fx-font-weight: bold");
+        
+        fieldContainer.setAlignment(Pos.CENTER);
+        fieldContainer.setSpacing(20);
+        
         buttonsContainer.setAlignment(Pos.CENTER);
         buttonsContainer.setSpacing(20);
         
@@ -112,7 +123,7 @@ public class ScheduleScreen extends HBox {
         @Override
         public void handle(ActionEvent event) {
             
-            Stage stage = (Stage) ScheduleScreen.this.getScene().getWindow();
+            Stage stage = (Stage) InputScreen.this.getScene().getWindow();
                 
             SettingsScreen nextScreen = new SettingsScreen();
 
@@ -149,13 +160,14 @@ public class ScheduleScreen extends HBox {
         
         private void yield(){
             
-            int previusScheduleIndex = ScheduleScreen.this.schedules.size() - 2;
+            int previusScheduleIndex = schedules.size() - 2;
             
-            ScheduleScreen.this.schedule = ScheduleScreen.this.schedules.get(previusScheduleIndex);
-            ScheduleScreen.this.schedules.remove(previusScheduleIndex + 1);
+            schedule = schedules.get(previusScheduleIndex);
+            schedules.remove(previusScheduleIndex + 1);
             
-            ScheduleScreen.this.scheduleContainer.getChildren().clear();
-            ScheduleScreen.this.scheduleContainer.getChildren().add(ScheduleScreen.this.schedule.getAsNode());
+            scheduleContainer.getChildren().clear();
+            scheduleContainer.getChildren().add(schedule.getAsNode());
+            nameField.setText(schedule.getOwnerName());
             
         }
     }
@@ -169,27 +181,22 @@ public class ScheduleScreen extends HBox {
             
             if(ownerName.isEmpty()){
                 
-                Alert fieldEmptyAlert = new Alert(Alert.AlertType.INFORMATION);
-                
-                fieldEmptyAlert.setTitle("Información");
-                fieldEmptyAlert.setHeaderText("¡Campo vacío!");
-                fieldEmptyAlert.setContentText("Olvidaste ingresar un nombre");
-                
-                fieldEmptyAlert.showAndWait();
-                
+                if(!fieldContainer.getChildren().contains(alertLabel)) fieldContainer.getChildren().add(alertLabel);
+            
             } else {
                 
-                ScheduleScreen.this.schedule.setOwnerName(ownerName);
+                schedule.setOwnerName(ownerName);
                 
-                nameField.setText("");
+                schedule = new InputSchedule();
+                schedules.add(InputScreen.this.schedule);
+                
+                nameField.clear();
+                fieldContainer.getChildren().remove(alertLabel);
                 if(backButton.isDisabled()) backButton.setDisable(false);
                 if(nextButton.isDisabled()) nextButton.setDisable(false);
                 
-                ScheduleScreen.this.schedule = new Schedule(periodsList);
-                ScheduleScreen.this.schedules.add(ScheduleScreen.this.schedule);
-                
-                ScheduleScreen.this.scheduleContainer.getChildren().clear();
-                ScheduleScreen.this.scheduleContainer.getChildren().add(ScheduleScreen.this.schedule.getAsNode());
+                scheduleContainer.getChildren().clear();
+                scheduleContainer.getChildren().add(schedule.getAsNode());
             }
         
         }
@@ -204,21 +211,15 @@ public class ScheduleScreen extends HBox {
             
             if(ownerName.isEmpty()){
                 
-                Alert fieldEmptyAlert = new Alert(Alert.AlertType.INFORMATION);
-                
-                fieldEmptyAlert.setTitle("Información");
-                fieldEmptyAlert.setHeaderText("¡Campo vacío!");
-                fieldEmptyAlert.setContentText("Olvidaste ingresar un nombre");
-                
-                fieldEmptyAlert.showAndWait();
+                if(!fieldContainer.getChildren().contains(alertLabel)) fieldContainer.getChildren().add(alertLabel);
                 
             } else {
                 
-                ScheduleScreen.this.schedule.setOwnerName(ownerName);
+                schedule.setOwnerName(ownerName);
                 
-                Stage stage = (Stage)ScheduleScreen.this.getScene().getWindow();
+                Stage stage = (Stage)InputScreen.this.getScene().getWindow();
             
-                ResultsScreen nextScreen = new ResultsScreen();
+                OutputScreen nextScreen = new OutputScreen(schedules);
 
                 stage.setScene(new Scene(nextScreen,900,600));
                 

@@ -23,10 +23,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -41,15 +43,18 @@ public class SettingsScreen extends VBox{
     private ArrayList<String> timeOptionsList;
     
     private Text instruction1, instruction2;
+    private HBox timeOptionsContainer;
     private ComboBox periodOptions, startTimeOptions, endTimeOptions;
     private Button nextScreen;
+    private Label alertLabel;
     
     public SettingsScreen(){
         
         createContents();
         setListeners();
-        this.getChildren().addAll(instruction1, periodOptions, instruction2, startTimeOptions, endTimeOptions, nextScreen);
+        this.getChildren().addAll(instruction1, periodOptions, instruction2, timeOptionsContainer, nextScreen, alertLabel);
         this.setAlignment(Pos.CENTER);
+        this.setSpacing(20);
     }
     
     private void createContents(){
@@ -76,7 +81,17 @@ public class SettingsScreen extends VBox{
         startTimeOptions = new ComboBox();
         endTimeOptions = new ComboBox();
         
+        timeOptionsContainer = new HBox();
+        timeOptionsContainer.setAlignment(Pos.CENTER);
+        timeOptionsContainer.setSpacing(20);
+        timeOptionsContainer.getChildren().addAll(startTimeOptions, endTimeOptions);
+        
         nextScreen = new Button("Seguir");
+        
+        alertLabel = new Label("¡Dejaste algo sin seleccionar!");
+        alertLabel.setTextFill(Color.RED);
+        alertLabel.setStyle("-fx-font-weight: bold");
+        alertLabel.setVisible(false);
         
     }
     
@@ -132,23 +147,13 @@ public class SettingsScreen extends VBox{
             
             if(periodIsSelected && startTimeIsSelected && endTimeIsSelected){
                 
+                initializePeriodsList();
+                
+                InputScreen nextScreen = new InputScreen();
                 Stage stage = (Stage) SettingsScreen.this.getScene().getWindow();
-                
-                ScheduleScreen nextScreen = new ScheduleScreen(getPeriodList());
-                
                 stage.setScene(new Scene(nextScreen, 900, 600));
                 
-            } else {
-                
-                Alert fieldEmptyAlert = new Alert(Alert.AlertType.INFORMATION);
-                
-                fieldEmptyAlert.setTitle("Información");
-                fieldEmptyAlert.setHeaderText("¡Campo vacío!");
-                fieldEmptyAlert.setContentText("Hay un campo vacío");
-                
-                fieldEmptyAlert.showAndWait();
-                
-            }
+            } else if(!alertLabel.isVisible()) alertLabel.setVisible(true);
            
         }
     }
@@ -177,7 +182,7 @@ public class SettingsScreen extends VBox{
         }
     }
     
-    private ArrayList<String> getPeriodList(){
+    private void initializePeriodsList(){
         
         String selectedStartTime = (String)startTimeOptions.getValue();
         String selectedEndTime = (String)endTimeOptions.getValue();
@@ -197,7 +202,7 @@ public class SettingsScreen extends VBox{
             
         }
         
-        return periodsList;
+        Schedule.periodsList = periodsList;
         
     }
     

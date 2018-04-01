@@ -56,10 +56,17 @@ public class WelcomeScreen extends VBox {
             
             Stage stage = (Stage)WelcomeScreen.this.getScene().getWindow();
             
+            stage.close();
+            
+            stage = new Stage();
+            
             SettingsScreen nextScreen = new SettingsScreen();
             
-            stage.setScene(new Scene(nextScreen,600,400));
+            stage.setScene(new Scene(nextScreen,900,600));
             
+            
+            stage.setTitle("AlphaTurtle");
+            stage.show();
         }
     
     }
