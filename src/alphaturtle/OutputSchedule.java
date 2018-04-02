@@ -118,7 +118,7 @@ public class OutputSchedule {
                         
                         cell.getChildren().add(numberOfNames);
                         
-                        Tooltip.install(cell, new Tooltip(getTooltipText(namesInCell)));
+                        Tooltip.install(cell, generateNamesTooltip(namesInCell));
                     
                         schedule.add(cell, column, row);
                         
@@ -129,7 +129,9 @@ public class OutputSchedule {
         
     }
     
-    private String getTooltipText(ArrayList<String> namesInCell){
+    private Tooltip generateNamesTooltip(ArrayList<String> namesInCell){
+        
+        Tooltip namesTooltip = new Tooltip();
         
         ArrayList<String> names = (ArrayList<String>)namesList.clone();
         names.removeAll(namesInCell);
@@ -138,7 +140,10 @@ public class OutputSchedule {
         
         for(String name : names) tooltipText += name.toUpperCase() + "\n";
         
-        return tooltipText;
+        namesTooltip.setText(tooltipText);
+        namesTooltip.setFont(Font.font(14));
+        
+        return namesTooltip;
     }
     
     public GridPane getAsNode(){

@@ -22,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -107,6 +108,8 @@ public class OutputScreen extends HBox{
         
         this.setAlignment(Pos.CENTER);
         
+        startButton.setStyle("-fx-background-radius: 0");
+        
         labelsContainer.setAlignment(Pos.CENTER);
         labelsContainer.setSpacing(20);
         
@@ -123,13 +126,17 @@ public class OutputScreen extends HBox{
         Rectangle nobodyToken = new Rectangle(15, 15, Color.DEEPPINK);
         Rectangle someoneToken = new Rectangle(15, 15, Color.GREY);
         
-        Label everyone = new Label("TODOS ESTÁN DISPONIBLES");
-        Label nobody = new Label("TODOS ESTÁN OCUPADOS");
-        Label someone = new Label("CANTIDAD DE PERSONAS DISPONIBLES");
-        
+        Label everyone = new Label("Todos están disponibles");
         everyone.setGraphic(everyoneToken);
+        everyone.setGraphicTextGap(10);
+        
+        Label nobody = new Label("Todos están ocupados");
         nobody.setGraphic(nobodyToken);
+        nobody.setGraphicTextGap(10);
+        
+        Label someone = new Label("Cantidad de personas disponibles");
         someone.setGraphic(someoneToken);
+        someone.setGraphicTextGap(10);
         
         labelsContainer.getChildren().addAll(everyone, nobody, someone);
     }
@@ -143,7 +150,7 @@ public class OutputScreen extends HBox{
                 
             SettingsScreen nextScreen = new SettingsScreen();
 
-            stage.setScene(new Scene(nextScreen, 900, 600));
+            stage.setScene(new Scene(nextScreen,500,300));
         
         }
     }

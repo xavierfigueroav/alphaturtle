@@ -18,6 +18,7 @@ package alphaturtle;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -27,7 +28,6 @@ import javafx.stage.Stage;
 public class AlphaTurtle extends Application {
     
     private Stage stage;
-    private Menus menuBar;
     private Scene welcomeScene;
     
     @Override
@@ -35,10 +35,10 @@ public class AlphaTurtle extends Application {
         stage = primaryStage;
         
         WelcomeScreen welcome = new WelcomeScreen();
-        welcomeScene = new Scene(welcome, 600, 400);
+        welcomeScene = new Scene(welcome, 600, 350);
         stage.setScene(welcomeScene);
         stage.setTitle("AlphaTurtle");
-        
+        stage.setResizable(false);
         stage.show();
     }
 

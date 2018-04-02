@@ -58,7 +58,7 @@ public class InputSchedule extends Schedule{
                     HBox dayContainer = new HBox();
                     dayContainer.getChildren().add(day);
                     dayContainer.setAlignment(Pos.CENTER);
-                    dayContainer.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
+                    dayContainer.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
                     schedule.add(dayContainer, column, row);
                 
                 } else if(row > 0 && column == 0){
@@ -68,15 +68,14 @@ public class InputSchedule extends Schedule{
                     hourContainer.setMinWidth(100);
                     hourContainer.getChildren().add(hour);
                     hourContainer.setAlignment(Pos.CENTER);
-                    hourContainer.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
+                    hourContainer.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
                     schedule.add(hourContainer, column, row);
                 
                 } else if (row != 0 && column != 0){
                 
                     Rectangle cell = new Rectangle(100,400/periodsList.size());
-                    cell.setFill(Color.WHITE);
-                    cell.setStroke(Color.WHITESMOKE);
-                    //cell.setStrokeWidth(3);
+                    cell.setFill(Color.WHITESMOKE);
+                    cell.setStroke(Color.WHITE);
 
                     cell.setOnMouseClicked(new ClickOnCellHandler(cell, row, column));
 
@@ -101,7 +100,7 @@ public class InputSchedule extends Schedule{
 
         @Override
         public void handle(MouseEvent e) {
-            if(cell.getFill().equals(Color.WHITE)){
+            if(cell.getFill().equals(Color.WHITESMOKE)){
                 
                 mirrorSchedule[row][column] = true;
                 cell.setFill(Color.AQUAMARINE);
@@ -109,7 +108,7 @@ public class InputSchedule extends Schedule{
             } else {
                 
                 mirrorSchedule[row][column] = false;
-                cell.setFill(Color.WHITE);
+                cell.setFill(Color.WHITESMOKE);
             }
         }
     }

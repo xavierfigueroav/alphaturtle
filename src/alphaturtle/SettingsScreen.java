@@ -21,78 +21,145 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
  *
  * @author Galo Xavier Figueroa Villacreses
  */
-public class SettingsScreen extends VBox{
+public class SettingsScreen extends BorderPane{
     
     private final int HOURS_OF_DAY = 24;
     private final int MINUTES_OF_HOUR = 60;
     private ArrayList<String> timeOptionsList;
     
-    private Text instruction1, instruction2;
-    private HBox timeOptionsContainer;
+    private GridPane settingsContainer;
+    private VBox topContainer;
+    private HBox bottomContainer;
     private ComboBox periodOptions, startTimeOptions, endTimeOptions;
     private Button nextScreen;
-    private Label alertLabel;
+    private Label title, description, instruction1, instruction2, instruction3, alertLabel, example;
     
     public SettingsScreen(){
         
         createContents();
+        setStyles();
         setListeners();
-        this.getChildren().addAll(instruction1, periodOptions, instruction2, timeOptionsContainer, nextScreen, alertLabel);
-        this.setAlignment(Pos.CENTER);
-        this.setSpacing(20);
+        this.setTop(topContainer);
+        this.setCenter(settingsContainer);
+        this.setBottom(bottomContainer);
     }
     
     private void createContents(){
         
-        instruction1 = new Text("Primero tienes que establecer la unidad de división mínima de tiempo que tendrá cada "
-                + "día de todos los horarios. ¿Cómo elegir?\n"
-                + "Si alguna actividad en alguno de los horarios comienza o termina en una hora de la forma HH:15 o HH:45, "
-                + "entonces debes elegir 15 minutos.\n"
-                + "Si alguna actividad en alguno de los horarios comienza o termina en una hora de la forma HH:30, entonces "
-                + "debes elegir 30 minutos.\n"
-                + "Si todas las actividades de todos los horarios comienzan y terminan "
-                + "en una hora en punto (HH:00), elige 60 minutos.");
-        instruction1.setWrappingWidth(500);
+        title = new Label("Configura los horarios");
         
+        description = new Label("Con esta configuración se crearán todos los horarios");
+        
+        instruction1 = new Label("Mínima de división del día");
         periodOptions = new ComboBox();
+        periodOptions.getItems().addAll("10 min", "15 min", "30 min", "60 min");
         
-        periodOptions.getItems().addAll("10", "15", "30", "60");
-        
-        instruction2 = new Text("De entre todos los horarios, selecciona la hora de inicio de la actividad más tempranera y "
-                + "la hora de finalización de la actividad más tardía.");
-        
-        instruction2.setWrappingWidth(500);
-        
+        instruction2 = new Label("Hora de inicio de la actividad más tempranera");
         startTimeOptions = new ComboBox();
-        endTimeOptions = new ComboBox();
         
-        timeOptionsContainer = new HBox();
-        timeOptionsContainer.setAlignment(Pos.CENTER);
-        timeOptionsContainer.setSpacing(20);
-        timeOptionsContainer.getChildren().addAll(startTimeOptions, endTimeOptions);
+        instruction3 = new Label("Hora de finalización de la actividad más tardía");
+        endTimeOptions = new ComboBox();
         
         nextScreen = new Button("Seguir");
         
         alertLabel = new Label("¡Dejaste algo sin seleccionar!");
+        
+        topContainer = new VBox();
+        topContainer.getChildren().addAll(title, description);
+        
+        settingsContainer = new GridPane();
+        settingsContainer.addRow(0, instruction1, periodOptions);
+        settingsContainer.addRow(1, instruction2, startTimeOptions);
+        settingsContainer.addRow(2, instruction3, endTimeOptions);
+        
+        bottomContainer = new HBox();
+        bottomContainer.getChildren().addAll(alertLabel, nextScreen);
+        
+    }
+    
+    private void setStyles(){
+        
+        title.setStyle("-fx-font-weight: bold");
+        description.setPadding(new Insets(5, 0, 0, 15));
+        
+        instruction1.setGraphic(new ImageView(SettingsScreen.class.getResource("/images/help.png").toExternalForm()));
+        instruction1.setContentDisplay(ContentDisplay.RIGHT);
+        instruction1.setGraphicTextGap(10);
+        instruction1.setTooltip(generateHelpTooltip());
+        
+        periodOptions.setMinWidth(85);
+        periodOptions.setStyle("-fx-background-radius: 0");
+        
+        startTimeOptions.setMinWidth(85);
+        startTimeOptions.setStyle("-fx-background-radius: 0");
+        
+        endTimeOptions.setMinWidth(85);
+        endTimeOptions.setStyle("-fx-background-radius: 0");
+        
+        nextScreen.setMinWidth(75);
+        nextScreen.setStyle("-fx-background-radius: 0");
+        
         alertLabel.setTextFill(Color.RED);
         alertLabel.setStyle("-fx-font-weight: bold");
         alertLabel.setVisible(false);
         
+        topContainer.setPadding(new Insets(5, 15, 15, 15));
+        topContainer.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        topContainer.setBorder(new Border(new BorderStroke(Color.DARKGRAY, Color.TRANSPARENT, Color.DARKGRAY, Color.TRANSPARENT, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, CornerRadii.EMPTY, BorderWidths.DEFAULT, Insets.EMPTY)));
+
+        settingsContainer.setHgap(20);
+        settingsContainer.setVgap(20);
+        settingsContainer.setAlignment(Pos.CENTER);
+        
+        bottomContainer.setAlignment(Pos.CENTER_RIGHT);
+        bottomContainer.setSpacing(20);
+        bottomContainer.setPadding(new Insets(15, 15, 15, 0));
+        bottomContainer.setBorder(new Border(new BorderStroke(Color.DARKGRAY, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, CornerRadii.EMPTY, BorderWidths.DEFAULT, Insets.EMPTY)));
+    }
+    
+    private Tooltip generateHelpTooltip(){
+        
+        Tooltip helpTooltip = new Tooltip();
+        
+        helpTooltip.setText("- Si alguna actividad en alguno de los horarios comienza o termina en una hora de la forma HH:15 o HH:45, "
+                + "entonces debes elegir 15 minutos.\n"
+                + "- Si alguna actividad en alguno de los horarios comienza o termina en una hora de la forma HH:30, entonces "
+                + "debes elegir 30 minutos.\n"
+                + "- Si todas las actividades de todos los horarios comienzan y terminan "
+                + "en una hora en punto (HH:00), elige 60 minutos.");
+        helpTooltip.setWrapText(true);
+        helpTooltip.setMaxWidth(350);
+        helpTooltip.setStyle("-fx-background-color: BEIGE;-fx-background-radius:0;-fx-text-fill:#000000");
+        
+        return helpTooltip;
     }
     
     private void setListeners(){
@@ -108,7 +175,7 @@ public class SettingsScreen extends VBox{
         @Override
         public void handle(ActionEvent event) {
             
-            int selectedPeriod = Integer.parseInt((String) periodOptions.getValue());
+            int selectedPeriod = Integer.parseInt(periodOptions.getValue().toString().substring(0, 2));
             
             createTimeOptionsList(selectedPeriod);
             
@@ -152,6 +219,7 @@ public class SettingsScreen extends VBox{
                 InputScreen nextScreen = new InputScreen();
                 Stage stage = (Stage) SettingsScreen.this.getScene().getWindow();
                 stage.setScene(new Scene(nextScreen, 900, 600));
+                stage.centerOnScreen();
                 
             } else if(!alertLabel.isVisible()) alertLabel.setVisible(true);
            

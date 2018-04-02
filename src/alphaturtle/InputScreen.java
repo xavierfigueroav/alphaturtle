@@ -43,7 +43,7 @@ public class InputScreen extends HBox {
     private VBox mainContainer;
     private HBox fieldContainer, scheduleContainer, buttonsContainer;
     private TextField nameField;
-    private Button backButton, addButton, nextButton, startButton;
+    private Button startButton, backButton, nextButton, finishButton;
     private Label alertLabel;
     
     public InputScreen(){
@@ -66,8 +66,8 @@ public class InputScreen extends HBox {
         nameField = new TextField();
         startButton = new Button("Volver a empezar");
         backButton = new Button("Anterior");
-        addButton = new Button("Registrar horario");
-        nextButton = new Button("Registrar y finalizar");
+        nextButton = new Button("Siguiente");
+        finishButton = new Button("Finalizar");
         
         alertLabel = new Label("¡Olvidaste el nombre!");
         
@@ -78,7 +78,7 @@ public class InputScreen extends HBox {
         
         fieldContainer.getChildren().add(nameField);
         scheduleContainer.getChildren().add(this.schedule.getAsNode());
-        buttonsContainer.getChildren().addAll(startButton, backButton, addButton, nextButton);
+        buttonsContainer.getChildren().addAll(startButton, backButton, nextButton, finishButton);
         mainContainer.getChildren().addAll(fieldContainer, scheduleContainer, buttonsContainer);
         
     }
@@ -87,8 +87,8 @@ public class InputScreen extends HBox {
         
         startButton.setOnAction(new StartButtonHandler());
         backButton.setOnAction(new BackButtonHandler());
-        addButton.setOnAction(new AddButtonHandler());
         nextButton.setOnAction(new NextButtonHandler());
+        finishButton.setOnAction(new FinishButtonHandler());
         
     }
     
@@ -100,9 +100,15 @@ public class InputScreen extends HBox {
         nameField.setAlignment(Pos.CENTER);
         nameField.setPromptText("Nombre del propietario del horario");
         nameField.setFocusTraversable(false);
+        nameField.setStyle("-fx-background-radius: 0");
         
         backButton.setDisable(true);
-        nextButton.setDisable(true);
+        finishButton.setDisable(true);
+        
+        startButton.setStyle("-fx-background-radius: 0");
+        backButton.setStyle("-fx-background-radius: 0");
+        nextButton.setStyle("-fx-background-radius: 0");
+        finishButton.setStyle("-fx-background-radius: 0");
         
         alertLabel.setTextFill(Color.RED);
         alertLabel.setStyle("-fx-font-weight: bold");
@@ -127,7 +133,7 @@ public class InputScreen extends HBox {
                 
             SettingsScreen nextScreen = new SettingsScreen();
 
-            stage.setScene(new Scene(nextScreen, 600, 400));
+            stage.setScene(new Scene(nextScreen,500,300));
         
         }
     }
@@ -172,7 +178,7 @@ public class InputScreen extends HBox {
         }
     }
 
-    private class AddButtonHandler implements EventHandler<ActionEvent> {
+    private class NextButtonHandler implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent event) {
@@ -193,7 +199,7 @@ public class InputScreen extends HBox {
                 nameField.clear();
                 fieldContainer.getChildren().remove(alertLabel);
                 if(backButton.isDisabled()) backButton.setDisable(false);
-                if(nextButton.isDisabled()) nextButton.setDisable(false);
+                if(finishButton.isDisabled()) finishButton.setDisable(false);
                 
                 scheduleContainer.getChildren().clear();
                 scheduleContainer.getChildren().add(schedule.getAsNode());
@@ -202,7 +208,7 @@ public class InputScreen extends HBox {
         }
     }
 
-    private class NextButtonHandler implements EventHandler<ActionEvent> {
+    private class FinishButtonHandler implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent event) {
